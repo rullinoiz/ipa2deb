@@ -1,0 +1,10 @@
+Package: com.rullinoiz.ipa2deb
+Depends: dpkg
+Name: ipa2deb
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Convert IPA to DEB
+Maintainer: rullinoiz
+Author: rullinoiz
+Section: Development
+Depiction: Convert IPA to DEB

@@ -1,0 +1,70 @@
+#!/bin/bash
+
+cd "$(dirname $0)"
+
+#variables
+IPAPATH="$1"
+
+#check if IPAPATH was not specified
+if [ -z "$IPAPATH" ]
+then
+	#ask for it
+	read -p 'Enter path of IPA file to convert: ' IPAPATH
+fi
+
+#check if metadata was set
+if [ -z "$2" ]
+then
+	#if not, then ask for each one
+	read -p 'Package Identifier: '  IDENTIFIER
+	read -p 'Name: ' NAME
+	read -p 'Version: ' VERSION
+	read -p 'Description: ' DESCRIPTION
+	read -p 'Maintainer: ' MAINTAINER
+	read -p 'Author: ' AUTHOR
+	read -p 'Section: ' SECTION
+
+	METADATA='Package: $IDENTIFIER\nDepends: \nName: $NAME\nVersion: $VERSION\nArchitecture: iphoneos-arm\nDescription: $DESCRIPTION\nMaintainer: $MAINTAINER\nAuthor: $AUTHOR\nSection: $SECTION\n'
+
+else
+
+	METADATA="$(cat $2)"
+	echo "$METADATA" > /tmp/stuff.tmp
+
+	WORDTOREMOVE="Package: "
+	IDENTIFIER="$(grep "$WORDTOREMOVE" /tmp/stuff.tmp)"
+	IDENTIFIER=${IDENTIFIER//$WORDTOREMOVE/}
+
+	WORDTOREMOVE="Architecture: "
+	ARCH="$(grep "$WORDTOREMOVE" /tmp/stuff.tmp)"
+	ARCH=${ARCH//$WORDTOREMOVE/}
+
+	WORDTOREMOVE="Version: "
+	VERSION="$(grep "$WORDTOREMOVE" /tmp/stuff.tmp)"
+	VERSION=${VERSION//$WORDTOREMOVE/}
+
+fi
+
+rm /tmp/stuff.tmp
+
+cp "$IPAPATH" /tmp/lmao.zip
+
+unzip /tmp/lmao.zip -d /tmp/lmao/
+rm /tmp/lmao.zip
+
+mkdir "/tmp/test"
+mkdir "/tmp/test/Applications"
+mkdir "/tmp/test/DEBIAN"
+
+printf "$METADATA" > /tmp/test/DEBIAN/control
+printf "\n" >> /tmp/test/DEBIAN/control
+
+mv -f /tmp/lmao/Payload/*/ /tmp/test/Applications/
+rm -rf /tmp/lmao
+
+printf "\n\n"
+echo -e "\033[94mipa2deb: \033[0mbuilding package in $(dirname $IPAPATH)/${IDENTIFIER}_${VERSION}_${ARCH}.deb"
+echo "This might take a while..."
+t="$(dpkg -b /tmp/test)"
+mv -n /tmp/test.deb "${IDENTIFIER}_${VERSION}_${ARCH}.deb"
+rm -rf /tmp/test

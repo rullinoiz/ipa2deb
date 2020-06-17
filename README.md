@@ -22,4 +22,5 @@ Try:
 - redoing the setup
 - run `zsh`
 - run `bash`
+
 (might be your shell not seeing it)

@@ -3,8 +3,14 @@ converts ipa to deb in the terminal
 
 
 # Setup
+first grab the latest release from the [release page](https://github.com/rullinoiz/ipa2deb/releases)
+## macOS (and maybe linux idk)
 move downloaded binary to `/usr/local/bin` or run `mv -f ~/Downloads/ipa2deb /usr/local/bin/`
-## Parameters
+## iOS
+install the latest deb file from the [release page](https://github.com/rullinoiz/ipa2deb/releases) or [add my cydia repo](https://repoiz.github.io/repoiz)
+## Windows
+not yet available, i'll have to rewrite the whole thing
+## Actual usage
 right now it's only:
 
 ```ipa2deb /path/to/ipa /path/to/metadata (optional)```

@@ -5,6 +5,13 @@ cd "$(dirname $0)"
 #variables
 IPAPATH="$1"
 
+#check if IPAPATH was not specified
+if [ -z "$IPAPATH" ]
+then
+	#ask for it
+	read -p 'Enter path of IPA file to convert: ' IPAPATH
+fi
+
 #check if metadata was set
 if [ -z "$2" ]
 then
@@ -38,12 +45,7 @@ else
 
 fi
 
-#check if IPAPATH was not specified
-if [ -z "$IPAPATH" ]
-then
-	#ask for it
-	read -p 'Enter path of IPA file to convert: ' IPAPATH
-fi
+rm /tmp/stuff.tmp
 
 cp "$IPAPATH" /tmp/lmao.zip
 

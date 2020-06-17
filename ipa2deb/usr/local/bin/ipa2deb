@@ -5,11 +5,24 @@ cd "$(dirname $0)"
 #variables
 IPAPATH="$1"
 
+if [ "$1" == "-h" ] || [ "$1" == "-help" ] || [ "$1" == "help" ]
+then
+	echo "not yet hehe"
+	exit
+fi
+
 #check if IPAPATH was not specified
 if [ -z "$IPAPATH" ]
 then
 	#ask for it
-	read -p 'Enter path of IPA file to convert: ' IPAPATH
+	read -p 'Enter path of IPA file to convert: ' IPAPATH && mv $IPAPATH $IPAPATH
+fi
+
+#check if relative path
+if [ "." == "$(dirname $IPAPATH)" ]
+then
+	echo -e "\n\033[94mipa2deb\033[0m: please use an absolute path and not a relative path, that kind of screws up the whole script"
+	exit
 fi
 
 #check if metadata was set
@@ -17,15 +30,24 @@ if [ -z "$2" ]
 then
 	#if not, then ask for each one
 	read -p 'Package Identifier: '  IDENTIFIER
+	echo "Package: $IDENTIFIER" > /tmp/stuff.tmp
 	read -p 'Name: ' NAME
+	echo "Name: $NAME" >> /tmp/stuff.tmp
 	read -p 'Version: ' VERSION
+	echo "Version: $VERSION" >> /tmp/stuff.tmp
 	read -p 'Description: ' DESCRIPTION
+	echo "Description: $DESCRIPTION" >> /tmp/stuff.tmp
 	read -p 'Maintainer: ' MAINTAINER
+	echo "Maintainer: $MAINTAINER" >> /tmp/stuff.tmp
 	read -p 'Author: ' AUTHOR
+	echo "Author: $AUTHOR" >> /tmp/stuff.tmp
 	read -p 'Section: ' SECTION
+	echo "Section: $SECTION" >> /tmp/stuff.tmp
+	echo "Architecture: iphoneos-arm" >> /tmp/stuff.tmp
 
-	METADATA='Package: $IDENTIFIER\nDepends: \nName: $NAME\nVersion: $VERSION\nArchitecture: iphoneos-arm\nDescription: $DESCRIPTION\nMaintainer: $MAINTAINER\nAuthor: $AUTHOR\nSection: $SECTION\n'
-
+	METADATA="$(cat /tmp/stuff.tmp)"
+	echo "$METADATA"
+	ARCH="iphoneos-arm"
 else
 
 	METADATA="$(cat $2)"
@@ -47,7 +69,7 @@ fi
 
 rm /tmp/stuff.tmp
 
-cp "$IPAPATH" /tmp/lmao.zip
+cp "$(dirname $IPAPATH)/$(basename $IPAPATH)" /tmp/lmao.zip
 
 unzip /tmp/lmao.zip -d /tmp/lmao/
 rm /tmp/lmao.zip
@@ -58,6 +80,7 @@ mkdir "/tmp/test/DEBIAN"
 
 printf "$METADATA" > /tmp/test/DEBIAN/control
 printf "\n" >> /tmp/test/DEBIAN/control
+cat /tmp/test/DEBIAN/control
 
 mv -f /tmp/lmao/Payload/*/ /tmp/test/Applications/
 rm -rf /tmp/lmao
@@ -66,5 +89,7 @@ printf "\n\n"
 echo -e "\033[94mipa2deb: \033[0mbuilding package in $(dirname $IPAPATH)/${IDENTIFIER}_${VERSION}_${ARCH}.deb"
 echo "This might take a while..."
 t="$(dpkg -b /tmp/test)"
-mv -n /tmp/test.deb "${IDENTIFIER}_${VERSION}_${ARCH}.deb"
+mv -f /tmp/test.deb "$(dirname $IPAPATH)/${IDENTIFIER}_${VERSION}_${ARCH}.deb"
 rm -rf /tmp/test
+echo -e "\033[94mipa2deb\033[0m: if there weren't any errors, it should've worked"
+echo -e "\033[94mipa2deb\033[0m: if there is no file in the current directory, it's probably in /tmp/test.deb"

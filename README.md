@@ -30,3 +30,5 @@ Try:
 - run `bash`
 
 (might be your shell not seeing it)
+## error parsing file '/tmp/test/DEBIAN/control'
+see this issue: https://github.com/rullinoiz/ipa2deb/issues/1#issue-640234014

@@ -11,17 +11,25 @@ then
 	exit
 fi
 
+echo "          ,--.   .     .   "
+echo ". ,-. ,-.    / ,-| ,-. |-. "
+echo "| | | ,-| ,-'  | | |-' | | "
+echo "' |-' \`-^ \`--- \`-' \`-' \`-' "
+echo -e "  |   \033[94mversion 1.0.4        "
+echo -e "\033[0m  |   \033[94mby rullinoiz\033[0m"
+echo -e "_,^._______________________\n"
+
 #check if IPAPATH was not specified
 if [ -z "$IPAPATH" ]
 then
 	#ask for it
-	read -p 'Enter path of IPA file to convert: ' IPAPATH && mv $IPAPATH $IPAPATH
+	read -p 'Enter path of IPA file to convert: ' IPAPATH
 fi
 
 #check if relative path
 if [ "." == "$(dirname $IPAPATH)" ]
 then
-	echo -e "\n\033[94mipa2deb\033[0m: please use an absolute path and not a relative path, that kind of screws up the whole script"
+	echo -e "\033[94mipa2deb\033[0m: please use an absolute path and not a relative path, that kind of screws up the whole script"
 	exit
 fi
 
